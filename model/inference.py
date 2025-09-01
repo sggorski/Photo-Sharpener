@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from loss import ssim_loss
+from .loss import ssim_loss
 from PIL import Image
 import matplotlib.pyplot as plt
 
@@ -30,10 +30,9 @@ def inference_one(img_pil,model_path):
     return tf.squeeze(predicted, axis=0)
 
 
-
 if __name__ == '__main__':
-    img = Image.open("test/test8.jpg").convert("RGB")
-    new = inference_one(img, "trained/model3.keras")
+    img = Image.open("test/test3.jpg").convert("RGB")
+    new = inference_one(img, "trained/model_latest.keras")
     plt.imshow(img)
     plt.show()
     plt.imshow(new)

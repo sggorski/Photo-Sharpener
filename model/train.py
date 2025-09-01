@@ -12,11 +12,10 @@ def get_model_name(prefix="model"):
 def train(path,epochs=10, steps=10):
     paths = get_image_paths(path)
     ds = get_dataset(paths)
-    model = build_unet()
+    model = build_model("vgg19")
     model.compile(
         optimizer="nadam",
-        loss=ssim_loss,
-        metrics=['mae']
+        loss="mae"
     )
     print("Started training...")
     model.fit(ds, epochs=epochs, steps_per_epoch=steps)
@@ -26,5 +25,5 @@ def train(path,epochs=10, steps=10):
     print("Model saved:" + path)
 
 if __name__ == '__main__':
-    PATH = r"D:\images\unlabeled\test2017\*.jpg"
-    train(PATH,25,20)
+    PATH = r"C:\Users\sggor\Personal\photo_sharpener\images\test2017\*.jpg"
+    train(PATH,1,1)
