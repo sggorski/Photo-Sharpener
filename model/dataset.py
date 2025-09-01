@@ -2,6 +2,9 @@ import tensorflow as tf
 from load import load_img
 
 def get_dataset(image_paths, batch_size = 4) -> tf.data.Dataset:
+    """
+        Constructs a dataset from a list of image paths.
+    """
     print("Started creating a  dataset...")
     ds = tf.data.Dataset.from_tensor_slices(image_paths)
     ds = ds.shuffle(buffer_size=len(image_paths))

@@ -6,13 +6,19 @@ from  datetime import datetime
 import os
 
 def get_model_name(prefix="model"):
+    """
+        Gets a name of a model
+    """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     return f"{prefix}_{timestamp}.keras"
 
-def train(path,epochs=10, steps=10):
+def train(path, model_type, epochs=10, steps=10):
+    """
+    Trains a specified model
+    """
     paths = get_image_paths(path)
     ds = get_dataset(paths)
-    model = build_model("vgg19")
+    model = build_model(model_type)
     model.compile(
         optimizer="nadam",
         loss="mae"
@@ -26,4 +32,4 @@ def train(path,epochs=10, steps=10):
 
 if __name__ == '__main__':
     PATH = r"C:\Users\sggor\Personal\photo_sharpener\images\test2017\*.jpg"
-    train(PATH,1,1)
+    train(PATH,"vgg19",1,1)

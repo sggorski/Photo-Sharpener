@@ -7,6 +7,9 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 def prepare(img_pil):
+    """
+        Prepares an image to be fed into a model for inference.
+    """
     img_np = np.array(img_pil) / 255.0
     img_np = cv2.resize(img_np, (584, 480))
     img_tf = tf.convert_to_tensor(img_np, dtype=tf.float32)
@@ -14,6 +17,9 @@ def prepare(img_pil):
     return batch_1
 
 def get_model(path):
+    """
+        Loads a model from a given path.
+    """
     model = keras.models.load_model(
         path,
         custom_objects={"ssim_loss": ssim_loss}
@@ -21,10 +27,16 @@ def get_model(path):
     return model
 
 def predict_batch(model, batch):
+    """
+    Predicts a batch of images.
+    """
     predicted = model.predict(batch)
     return predicted
 
 def inference_one(img_pil,model_path):
+    """
+    Inference one image using a given model.
+    """
     model = get_model(model_path)
     predicted = predict_batch(model, prepare(img_pil))
     return tf.squeeze(predicted, axis=0)

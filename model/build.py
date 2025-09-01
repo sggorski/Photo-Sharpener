@@ -3,6 +3,9 @@ from keras import layers
 from tensorflow.keras.applications import VGG19
 
 def build_model(choice,input_shape=(480, 584, 3)):
+    """
+        Builds the proper model based on the choice parameter
+    """
     print("Started building a  model...")
     if choice == 'vgg19':
         model =  build_vgg19(input_shape)
@@ -17,6 +20,9 @@ def build_model(choice,input_shape=(480, 584, 3)):
 
 
 def conv_block(x, filters):
+    """
+        Builds a convolutional block used by unet-like model
+    """
     x = layers.Conv2D(filters, 3, padding="same")(x)
     x = layers.BatchNormalization()(x)
     x = layers.ReLU()(x)
@@ -26,8 +32,15 @@ def conv_block(x, filters):
     return x
 
 def build_unet(input_shape=(480, 584, 3)):
+    """
+        Builds a U-Net–like model with:
+        - Encoder: conv + pooling layers to capture context
+        - Bottleneck: deepest features
+        - Decoder: upsampling + skip connections to recover details
+    """
     inputs = layers.Input(shape=input_shape)
 
+    #Encoder
     c1 = conv_block(inputs, 32)
     p1 = layers.MaxPooling2D(2)(c1)
 
@@ -37,8 +50,10 @@ def build_unet(input_shape=(480, 584, 3)):
     c3 = conv_block(p2, 128)
     p3 = layers.MaxPooling2D(2)(c3)
 
+    #Bottleneck
     b = conv_block(p3, 256)
 
+    # Decoder
     u3 = layers.Conv2DTranspose(128, 3, strides=2, padding="same")(b)
     u3 = layers.Concatenate()([u3, c3])
     u3 = conv_block(u3, 128)
@@ -57,6 +72,9 @@ def build_unet(input_shape=(480, 584, 3)):
 
 
 def residual_block(x, filters):
+    """
+            Builds a residual block used by unet-like model
+    """
     shortcut = x
     if shortcut.shape[-1] != filters:
         shortcut = layers.Conv2D(filters, 1, padding="same")(shortcut)
@@ -72,6 +90,13 @@ def residual_block(x, filters):
 
 
 def build_resunet(input_shape=(480, 584, 3)):
+    """
+        Builds a ResUNet-like model with:
+        - Encoder: residual blocks + pooling to capture features
+        - Bottleneck: deepest features
+        - Decoder: upsampling + skip connections using residual blocks
+        - Output: residual added to input - model only learns the changes it has to apply to the given picture
+    """
     inputs = layers.Input(shape=input_shape)
 
     c1 = residual_block(inputs, 32)
@@ -107,6 +132,11 @@ def build_resunet(input_shape=(480, 584, 3)):
 
 # Transfer learning
 def build_vgg19(input_shape=(480, 584, 3)):
+    """
+        Builds a VGG19-based encoder-decoder model with:
+        - Encoder: VGG19 convolutional layers (trained from scratch)
+        - Decoder: upsampling + conv layers to reconstruct image
+    """
     input_img = layers.Input(shape=input_shape)
 
     vgg = VGG19(weights=None, include_top=False, input_tensor=input_img)

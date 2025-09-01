@@ -6,12 +6,20 @@ import matplotlib.pyplot as plt
 
 
 def get_image_paths(path):
+    """
+        Gets a list of image paths.
+    """
     print("Started loading paths...")
     paths =  glob.glob(path)
     print("Finished loading paths...")
     return paths
 
 def degrade_image(original):
+    """
+        Prepares image for the training, returns a pair: degraded image and original image.
+        Applies randomised degeneration of an image, image can be left without any changes,
+        so the model can also learn when not to apply any modifications
+    """
     target = original.copy()
     degraded = original.copy()
 
@@ -34,6 +42,9 @@ def degrade_image(original):
 
 
 def _load_img(path):
+    """
+    Loads an image from the path and applies degrade_image function.
+    """
     path = path.numpy().decode('utf-8')
     img = cv2.imread(path)
     img = cv2.resize(img, (584, 480))
@@ -45,6 +56,9 @@ def _load_img(path):
 
 
 def load_img(path):
+  """
+    Loads an image from the path and applies degrade_image function, returns tf tensors
+  """
   blurred,img =  tf.py_function(func=_load_img, inp=[path], Tout=(tf.float32, tf.float32))
   blurred.set_shape([480, 584,3])
   img.set_shape([480, 584,3])

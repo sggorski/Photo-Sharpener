@@ -5,6 +5,10 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 def main():
+    """
+        Performs inference on a single image and saves it in a proper path.
+        Validates input data.
+    """
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
     in_img = sys.argv[1]
     out_img = sys.argv[2]
